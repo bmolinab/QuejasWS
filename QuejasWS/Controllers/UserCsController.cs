@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using QuejasWS.Helpers;
 using QuejasWS.Models;
 
 namespace QuejasWS.Controllers
@@ -89,15 +91,74 @@ namespace QuejasWS.Controllers
             {
                 return BadRequest(ModelState);
             }
-
             _context.UserC.Add(userC);
             await _context.SaveChangesAsync();
-
             return CreatedAtAction("GetUserC", new { id = userC.IdUser }, userC);
         }
         [HttpPost]
+        [Route("Login")]
+        public async Task<Response> LoginUserCs([FromBody] UserC userC)
+        {
+            try
+            {
+                var existeUsuario = _context.UserC.
+                               Where(u => u.UserName == userC.UserName && u.Password == userC.Password)
+                               .FirstOrDefault();
+                if(existeUsuario!=null)
+                {
+                    return new Response
+                    {
+                        IsSuccess = true,
+                        Message = "Acceso completo",
+                        Result = existeUsuario
+                    };
+                }
+                else
+                {
+                    return new Response
+                    {
+                        IsSuccess = false,
+                        Message = "Contraseña o Usuario Incorrecto",
+                        Result = null
+                    };
+                }
+            }
+            catch
+            {
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = "Ocurrio un error inesperado",
+                    Result = null
+                };
+            }
+        }
+
+
+
+        [HttpPost]
+        [Route ("UploadProfilePicture")]
+        public async Task<IActionResult> PostProfilePicture(IFormFile file)
+        {
+          
+
+            return Ok("File uploaded successfully"); 
+        }
+
+         
+
+
+        [HttpPost]
+        [Route("Registrar")]
         public async Task<IActionResult> RegistrarUserC([FromBody] UserC userC)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            
+            _context.UserC.Add(userC);
+            await _context.SaveChangesAsync();
             return CreatedAtAction("GetUserC", new { id = userC.IdUser }, userC);
         }
 
