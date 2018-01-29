@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,9 @@ namespace QuejasWS.Controllers
     public class UserCsController : Controller
     {
         private readonly QuejasDBContext _context;
+        private readonly IHostingEnvironment _hostingEnvironment = Constants._env;
+
+      
 
         public UserCsController(QuejasDBContext context)
         {
@@ -138,11 +142,49 @@ namespace QuejasWS.Controllers
 
         [HttpPost]
         [Route ("UploadProfilePicture")]
-        public async Task<IActionResult> PostProfilePicture(IFormFile file)
+        public async Task<Response> PostProfilePicture([FromBody]FileRequest file)
         {
-          
+            if (!ModelState.IsValid)
+            {
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = "error de modelo",
+                    Result = BadRequest(ModelState)
+                };
+            }
 
-            return Ok("File uploaded successfully"); 
+            try
+            {
+                string folder = "ProfilePictures";
+                string extension = ".jpg";
+                    var stream = new MemoryStream(file.File);
+                    var a = string.Format("{0}/{1}{2}", folder, file.Name, extension);
+                    var targetDirectory = Path.Combine(_hostingEnvironment.ContentRootPath, a);
+                    using (var fileStream = new FileStream(targetDirectory, FileMode.Create, FileAccess.Write))
+                    {
+                        await stream.CopyToAsync(fileStream);
+                    }
+
+                return new Response
+                {
+                    IsSuccess = true,
+                    Message = "La foto se subio con exito",
+                    Result = Ok(),
+                };
+
+
+            }
+            catch(Exception ex)
+            {
+                return new Response
+                {
+                    IsSuccess=false,
+                    Message= "Sucedio un error con el archivo",
+                    Result=  _hostingEnvironment.WebRootPath +" brian"+ ex,
+                };
+            }
+
         }
 
          
