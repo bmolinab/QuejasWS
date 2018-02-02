@@ -133,7 +133,7 @@ namespace QuejasWS.Controllers
                 {
                     IsSuccess=true,
                     Message="Lista de Subcategoria",
-                    Result = _context.Subcategory.Where(x => x.IdCategory == category.IdCategory).ToListAsync()
+                    Result = _context.Subcategory.Where(x => x.IdCategory == category.IdCategory).ToList()
                 };
             }
             catch (Exception ex)
