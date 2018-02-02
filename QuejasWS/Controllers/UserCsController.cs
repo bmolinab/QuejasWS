@@ -186,10 +186,7 @@ namespace QuejasWS.Controllers
             }
 
         }
-
          
-
-
         [HttpPost]
         [Route("Registrar")]
         public async Task<IActionResult> RegistrarUserC([FromBody] UserC userC)
@@ -198,11 +195,37 @@ namespace QuejasWS.Controllers
             {
                 return BadRequest(ModelState);
             }
-            
+            if(userC.FacebookId!=null & userC.FacebookId!="")
+            {
+                var existeUsuario = _context.UserC.
+                              Where(u => u.FacebookId == userC.FacebookId)
+                              .FirstOrDefault();
+                if (existeUsuario != null)
+                {
+                    return Ok(existeUsuario);
+                }
+                userC.UserName = "FB_" + userC.FacebookId;
+            }
+
+            if (userC.TwitterId != null & userC.TwitterId != "")
+            {
+                var existeUsuario = _context.UserC.
+                              Where(u => u.TwitterId == userC.TwitterId)
+                              .FirstOrDefault();
+                if (existeUsuario != null)
+                {
+                    return Ok(existeUsuario);
+                }
+                
+            }
+
             _context.UserC.Add(userC);
             await _context.SaveChangesAsync();
             return CreatedAtAction("GetUserC", new { id = userC.IdUser }, userC);
         }
+
+
+      
 
         // DELETE: api/UserCs/5
         [HttpDelete("{id}")]

@@ -22,6 +22,10 @@ namespace QuejasWS.Models
         public string Verified { get; set; }
         public string LinkFacebook { get; set; }
         public string LinkTwitter { get; set; }
+        public string Email { get; set; }
+        public string PhotoUrl { get; set; }
+        public string FacebookId { get; set; }
+        public string TwitterId { get; set; }
 
         public ICollection<Comment> Comment { get; set; }
         public ICollection<Complain> Complain { get; set; }

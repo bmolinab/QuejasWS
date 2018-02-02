@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using QuejasWS.Helpers;
 using QuejasWS.Models;
 
 namespace QuejasWS.Controllers
@@ -25,6 +26,31 @@ namespace QuejasWS.Controllers
         public IEnumerable<Category> GetCategory()
         {
             return _context.Category;
+        }
+
+        [Route("GetCategorias")]
+        [HttpGet]
+        public async Task<Response> GetCategories()
+        {
+            try
+            {
+                return new Response
+                {
+                    Message="Lista de Cotegorias",
+                    IsSuccess=true,
+                    Result = _context.Category
+                };
+            }
+            catch(Exception ex)
+            {
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message= "Sucedio un error",
+                    Result = ex
+                };
+
+            }
         }
 
         // GET: api/Categories/5

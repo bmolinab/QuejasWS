@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using QuejasWS.Helpers;
 using QuejasWS.Models;
 
 namespace QuejasWS.Controllers
@@ -26,6 +27,8 @@ namespace QuejasWS.Controllers
         {
             return _context.Subcategory;
         }
+
+
 
         // GET: api/Subcategories/5
         [HttpGet("{id}")]
@@ -108,6 +111,40 @@ namespace QuejasWS.Controllers
             }
 
             return CreatedAtAction("GetSubcategory", new { id = subcategory.IdSubcategory }, subcategory);
+        }
+
+        [Route("SubcategoryByCategory")]
+        [HttpPost]
+        public async Task<Response> GetSubcategoryByCategory([FromBody] Category category)
+        {
+            if (!ModelState.IsValid)
+            {
+                return new Response
+                {
+                    IsSuccess=false,
+                    Message="Error en el modelo",
+                    Result=    BadRequest(ModelState)
+                };
+            }
+
+            try
+            {
+                return new Response
+                {
+                    IsSuccess=true,
+                    Message="Lista de Subcategoria",
+                    Result = _context.Subcategory.Where(x => x.IdCategory == category.IdCategory).ToListAsync()
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = "Error ",
+                    Result = ex
+                };
+            }
         }
 
         // DELETE: api/Subcategories/5

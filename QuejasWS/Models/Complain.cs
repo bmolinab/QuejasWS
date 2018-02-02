@@ -16,6 +16,9 @@ namespace QuejasWS.Models
         public string Title { get; set; }
         public string Description { get; set; }
         public string Photo { get; set; }
+        public decimal? Latitude { get; set; }
+        public decimal? Longitude { get; set; }
+        public bool? Approved { get; set; }
 
         public Subcategory IdSubcategoryNavigation { get; set; }
         public UserC IdUserNavigation { get; set; }
